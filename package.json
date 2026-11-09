@@ -1,0 +1,40 @@
+{
+  "name": "ai-social-content-agent",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/tests"
+    ],
+    "testRegex": ".*\\.spec\\.ts$"
+  },
+  "dependencies": {
+    "@google/genai": "^3.0.0",
+    "@nestjs/bullmq": "^11.0.5",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "bullmq": "^5.81.5",
+    "groq-sdk": "^1.6.0",
+    "ioredis": "^5.11.1",
+    "openai": "^7.53.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^11.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "dotenv": "^18.0.9",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,63 @@
+// The PostgreSQL tables for this project.
+// Written for Prisma 6. The database address comes only from the .env file.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// The status of the whole workflow
+enum WorkflowStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// The agent stages. Kept apart from WorkflowStatus on purpose:
+// a workflow can be PROCESSING with only some of these stages done.
+enum WorkflowStage {
+  VERIFICATION
+  RESEARCH
+  EDITORIAL
+  CREATIVE
+  REVIEW
+}
+
+// One row = one news item = one independent workflow.
+//
+// Never save API keys, prompts containing secrets, or AbortSignal in this table.
+model Workflow {
+  id      String         @id // the workflowId already created for the queue job
+  newsId  String         @unique
+  batchId String
+  status  WorkflowStatus @default(PENDING)
+
+  // The news as it was submitted. Set once when the row is created, never updated.
+  originalInput Json
+
+  // Each agent saves only its own column. Empty until that agent has finished.
+  verification Json?
+  research     Json?
+  editorial    Json?
+  creative     Json?
+  review       Json?
+
+  completedStages WorkflowStage[] @default([])
+
+  // Goes up by 1 on every update. An update must say which version it read,
+  // so an old copy of the workflow can never overwrite newer data.
+  version Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([batchId]) // batch progress
+  @@index([status]) // find pending or failed workflows
+  @@index([createdAt]) // workflow history
+}
